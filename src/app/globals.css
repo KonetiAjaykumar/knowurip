@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+:root {
+  --background: #030014;
+  --foreground: #f3f4f6;
+  
+  --card-bg: rgba(10, 10, 25, 0.45);
+  --card-border: rgba(255, 255, 255, 0.05);
+  --card-hover-border: rgba(99, 102, 241, 0.3);
+  
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Custom Webkit scrollbar for sleek dark look */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #030014;
+}
+::-webkit-scrollbar-thumb {
+  background: #1e1b4b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #312e81;
+}
+
+/* Custom animations */
+@keyframes float-one {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  33% {
+    transform: translate(30px, -50px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.95);
+  }
+}
+
+@keyframes float-two {
+  0%, 100% {
+    transform: translate(0px, 0px) scale(1);
+  }
+  50% {
+    transform: translate(-40px, 40px) scale(1.15);
+  }
+}
+
+.animate-float-1 {
+  animation: float-one 20s infinite ease-in-out;
+}
+
+.animate-float-2 {
+  animation: float-two 25s infinite ease-in-out;
+}
+
+/* Glassmorphism design system */
+.glass-panel {
+  background: var(--card-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--card-border);
+  border-radius: 1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel-hover:hover {
+  border-color: var(--card-hover-border);
+  box-shadow: 0 0 25px rgba(99, 102, 241, 0.1);
+  background: rgba(10, 10, 25, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Glowing text gradients */
+.text-gradient-primary {
+  background: linear-gradient(135deg, #a5b4fc 0%, #6366f1 50%, #4f46e5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gradient-secondary {
+  background: linear-gradient(135deg, #c084fc 0%, #818cf8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Glow ring effects */
+.glow-ring-indigo {
+  box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+}
+
+.glow-ring-green {
+  box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
+}
+
+.glow-ring-red {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.2);
+}
+
+/* Grid overlay background */
+.bg-grid-overlay {
+  background-size: 40px 40px;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+}
+
+/* Shimmer loading effect */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.03) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.03) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
