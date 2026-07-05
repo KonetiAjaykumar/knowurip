@@ -1,0 +1,72 @@
+@import "tailwindcss";
+
+@theme {
+  --color-cyber-blue: #00d2ff;
+  --color-cyber-dark: #020617;
+  --color-cyber-card: rgba(8, 18, 35, 0.85);
+  --color-cyber-border: rgba(55, 110, 255, 0.25);
+  --animate-spin-slow: spin 15s linear infinite;
+}
+
+/* Keyframes for scanning animations */
+@keyframes scanner {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.3;
+  }
+  50% {
+    transform: translateY(100%);
+    opacity: 0.8;
+  }
+}
+
+/* Custom background grid & animations */
+body {
+  background-color: #020617;
+  color: #f8fafc;
+  overflow-x: hidden;
+}
+
+/* Sleek Cyber Glassmorphism Utility */
+.cyber-glass {
+  background: rgba(8, 18, 35, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(55, 110, 255, 0.15);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+.cyber-glass:hover {
+  border-color: rgba(0, 210, 255, 0.4);
+  box-shadow: 0 0 25px rgba(0, 210, 255, 0.15);
+}
+
+/* Shimmer load skeleton */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.cyber-shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.cyber-shimmer::after {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.05) 20%,
+    rgba(255, 255, 255, 0.1) 60%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 2s infinite;
+  content: '';
+}
