@@ -528,19 +528,41 @@ export default function HomePage() {
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.4, delay: 0.15 }}
-                className="border border-white/10 rounded-2xl bg-slate-900/70 p-5 backdrop-blur-xl hover:border-cyan-500/20 hover:-translate-y-1 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex items-start gap-4"
+                className="border border-white/10 rounded-2xl bg-slate-900/70 p-5 backdrop-blur-xl hover:border-cyan-500/20 hover:-translate-y-1 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex flex-col gap-4"
               >
-                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
-                  <Globe className="h-5 w-5 text-cyan-400" />
+                <div className="flex items-start gap-4">
+                  <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
+                    <Globe className="h-5 w-5 text-cyan-400" />
+                  </div>
+                  <div className="space-y-1 flex-grow">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">Positioning</span>
+                    <h4 className="font-bold text-white text-sm">Coords (Lat, Long)</h4>
+                    <p className="text-xs text-slate-300 font-mono pt-1">
+                      {data.latitude.toFixed(4)}, {data.longitude.toFixed(4)}
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1 flex-grow">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">Positioning</span>
-                  <h4 className="font-bold text-white text-sm">Coords (Lat, Long)</h4>
-                  <p className="text-xs text-slate-300 font-mono pt-1">
-                    {data.latitude.toFixed(4)}, {data.longitude.toFixed(4)}
-                  </p>
-                  <span className="text-[10px] text-slate-500 font-mono block">Equirectangular Proj</span>
-                </div>
+
+                {/* Small Clickable Google Maps Preview */}
+                <a
+                  href={`https://www.google.com/maps/search/?api=1&query=${data.latitude},${data.longitude}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="relative block w-full h-32 rounded-xl overflow-hidden border border-white/5 bg-slate-950 cursor-pointer group/map"
+                >
+                  <iframe
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, filter: "invert(90%) hue-rotate(180deg) grayscale(10%)", pointerEvents: "none" }}
+                    loading="lazy"
+                    src={`https://maps.google.com/maps?q=${data.latitude},${data.longitude}&t=&z=12&ie=UTF8&iwloc=&output=embed`}
+                  ></iframe>
+                  <div className="absolute inset-0 bg-cyan-500/0 hover:bg-cyan-500/10 transition-colors duration-300 flex items-center justify-center">
+                    <span className="opacity-0 group-hover/map:opacity-100 transition-opacity duration-300 bg-slate-950/80 border border-cyan-500/30 text-[10px] text-cyan-400 font-mono px-2.5 py-1 rounded">
+                      Open in Google Maps
+                    </span>
+                  </div>
+                </a>
               </motion.div>
 
               {/* Card 3: ISP / Network */}
@@ -620,37 +642,6 @@ export default function HomePage() {
               </motion.div>
 
             </div>
-
-            {/* Google Maps Geolocation Embed */}
-            <motion.div
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.5, delay: 0.35 }}
-              className="border border-white/10 rounded-2xl bg-slate-900/70 p-5 backdrop-blur-xl hover:border-cyan-500/20 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex flex-col gap-4"
-            >
-              <div className="flex items-center gap-2.5">
-                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
-                  <MapPin className="h-5 w-5 text-cyan-400" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-white text-sm">Google Maps Geolocation</h3>
-                  <p className="text-xs text-slate-400 font-mono">
-                    Approximate Location: {data.city}, {data.region}, {data.country} ({data.latitude.toFixed(4)}, {data.longitude.toFixed(4)})
-                  </p>
-                </div>
-              </div>
-              <div className="w-full h-80 rounded-xl overflow-hidden border border-white/5 relative bg-slate-950 shadow-inner">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, filter: "invert(90%) hue-rotate(180deg) grayscale(10%)" }}
-                  loading="lazy"
-                  allowFullScreen
-                  referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://maps.google.com/maps?q=${data.latitude},${data.longitude}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
-                ></iframe>
-              </div>
-            </motion.div>
 
             {/* ACTION PANELS - Export JSON & Share */}
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
