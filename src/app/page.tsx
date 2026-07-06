@@ -61,23 +61,33 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
+  // Search & Query states
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeIp, setActiveIp] = useState<string | null>(null);
+
   // Interactive Feedbacks
   const [copied, setCopied] = useState(false);
   const [shared, setShared] = useState(false);
   const [liveClock, setLiveClock] = useState("");
   const [clientInfo, setClientInfo] = useState<ClientInfo | null>(null);
 
-  // Fetch client IP details from server endpoint
-  const fetchClientData = useCallback(async () => {
+  // Fetch IP details from server endpoint (auto-detect or query custom IP)
+  const fetchIPData = useCallback(async (ipQuery?: string) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/ip");
+      const url = ipQuery ? `/api/ip?ip=${encodeURIComponent(ipQuery)}` : "/api/ip";
+      const res = await fetch(url);
       if (!res.ok) {
         throw new Error(`Server returned code ${res.status}: Failed to resolve network identity.`);
       }
       const ipJson: IPData = await res.json();
       setData(ipJson);
+      if (ipQuery) {
+        setActiveIp(ipJson.ip);
+      } else {
+        setActiveIp(null);
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Unable to retrieve network details.");
@@ -88,8 +98,19 @@ export default function HomePage() {
 
   // Fetch on mount
   useEffect(() => {
-    fetchClientData();
-  }, [fetchClientData]);
+    fetchIPData();
+  }, [fetchIPData]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!searchQuery.trim()) return;
+    fetchIPData(searchQuery.trim());
+  };
+
+  const handleReset = () => {
+    setSearchQuery("");
+    fetchIPData();
+  };
 
   // Update Clock & Client Information
   useEffect(() => {
@@ -221,6 +242,57 @@ export default function HomePage() {
           </motion.p>
         </section>
 
+        {/* SEARCH BAR */}
+        <div className="max-w-md mx-auto relative z-20 space-y-2.5">
+          <form onSubmit={handleSearch} className="flex items-center gap-2">
+            <div className="relative flex-grow">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Globe className="h-4 w-4 text-slate-500" />
+              </span>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search IP / Domain (e.g. 8.8.8.8 or google.com)"
+                className="w-full bg-slate-900/60 border border-white/10 focus:border-cyan-500/50 rounded-xl pl-10 pr-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none transition-colors"
+              />
+            </div>
+            <button
+              type="submit"
+              className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs cursor-pointer transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] shrink-0"
+            >
+              Lookup
+            </button>
+            {activeIp && (
+              <button
+                type="button"
+                onClick={handleReset}
+                className="px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 text-xs font-semibold text-white transition-all cursor-pointer hover:bg-white/10 shrink-0"
+              >
+                Reset
+              </button>
+            )}
+          </form>
+
+          {/* Preset IP/Domain Shortcuts */}
+          <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-mono">
+            <span className="text-slate-500">Presets:</span>
+            {["8.8.8.8", "1.1.1.1", "google.com", "github.com"].map((preset) => (
+              <button
+                key={preset}
+                type="button"
+                onClick={() => {
+                  setSearchQuery(preset);
+                  fetchIPData(preset);
+                }}
+                className="px-2 py-0.5 rounded border border-white/5 bg-slate-900/50 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/20 transition-all cursor-pointer"
+              >
+                {preset}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {loading ? (
           /* Dark Cyber Loading Skeleton */
           <div className="space-y-8 animate-pulse pt-6">
@@ -242,7 +314,7 @@ export default function HomePage() {
             <h3 className="text-white font-bold text-lg">DNS Resolution Error</h3>
             <p className="text-slate-400 text-sm">{error}</p>
             <button
-              onClick={fetchClientData}
+              onClick={() => fetchIPData(activeIp || undefined)}
               className="px-5 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs cursor-pointer transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)]"
             >
               Retry Node Handshake
@@ -293,7 +365,7 @@ export default function HomePage() {
                   )}
                 </button>
                 <button
-                  onClick={fetchClientData}
+                  onClick={() => fetchIPData(activeIp || undefined)}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 text-xs font-semibold text-white transition-all duration-300 cursor-pointer hover:bg-white/10"
                 >
                   <RefreshCw className="h-3.5 w-3.5 text-slate-400" />
@@ -548,6 +620,37 @@ export default function HomePage() {
               </motion.div>
 
             </div>
+
+            {/* Google Maps Geolocation Embed */}
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
+              className="border border-white/10 rounded-2xl bg-slate-900/70 p-5 backdrop-blur-xl hover:border-cyan-500/20 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex flex-col gap-4"
+            >
+              <div className="flex items-center gap-2.5">
+                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
+                  <MapPin className="h-5 w-5 text-cyan-400" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-sm">Google Maps Geolocation</h3>
+                  <p className="text-xs text-slate-400 font-mono">
+                    Approximate Location: {data.city}, {data.region}, {data.country} ({data.latitude.toFixed(4)}, {data.longitude.toFixed(4)})
+                  </p>
+                </div>
+              </div>
+              <div className="w-full h-80 rounded-xl overflow-hidden border border-white/5 relative bg-slate-950 shadow-inner">
+                <iframe
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, filter: "invert(90%) hue-rotate(180deg) grayscale(10%)" }}
+                  loading="lazy"
+                  allowFullScreen
+                  referrerPolicy="no-referrer-when-downgrade"
+                  src={`https://maps.google.com/maps?q=${data.latitude},${data.longitude}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
+                ></iframe>
+              </div>
+            </motion.div>
 
             {/* ACTION PANELS - Export JSON & Share */}
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
