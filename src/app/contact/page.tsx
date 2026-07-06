@@ -58,7 +58,7 @@ export default function ContactPage() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="text-slate-400 text-sm max-w-sm mx-auto"
           >
-            Have feedback, feature requests, or queries regarding network routing analytics? Connect with our engineers.
+            Have feedback, feature requests, or reviews? Send your thoughts to <span className="text-cyan-400 font-semibold font-mono">konetiajaykumar0@gmail.com</span> or fill out the dashboard transmission module below.
           </motion.p>
         </section>
 
@@ -167,9 +167,9 @@ export default function ContactPage() {
                 className="text-center py-8 space-y-4"
               >
                 <CheckCircle2 className="h-14 w-14 text-emerald-400 mx-auto animate-bounce" />
-                <h3 className="text-white font-extrabold text-xl">Transmission Success!</h3>
+                <h3 className="text-white font-extrabold text-xl">Review Dispatch Success!</h3>
                 <p className="text-slate-400 text-sm max-w-xs mx-auto leading-relaxed">
-                  Your message has been packets-routed successfully. Our team will read the payload and reply shortly.
+                  Your message has been routed to <span className="text-cyan-400 font-semibold font-mono">konetiajaykumar0@gmail.com</span> successfully. Thank you for your feedback!
                 </p>
                 <button
                   onClick={() => setSubmitted(false)}
