@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Mail, MessageSquare, Send, CheckCircle2, User, Globe } from "lucide-react";
+import { Mail, MessageSquare, Send, CheckCircle2, User, Globe, ShieldAlert } from "lucide-react";
 
 export default function ContactPage() {
   const [name, setName] = useState("");
@@ -10,20 +10,35 @@ export default function ContactPage() {
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email || !message) return;
+    if (!name.trim() || !email.trim() || !message.trim()) return;
     
     setSubmitting(true);
-    // Simulate submission delay
-    setTimeout(() => {
-      setSubmitting(false);
+    setError(null);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), message: message.trim() }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to transmit message.");
+      }
+
       setSubmitted(true);
       setName("");
       setEmail("");
       setMessage("");
-    }, 1500);
+    } catch (err: any) {
+      setError(err.message || "An unexpected network error occurred.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -79,6 +94,19 @@ export default function ContactPage() {
                 onSubmit={handleSubmit}
                 className="space-y-5"
               >
+                <AnimatePresence mode="wait">
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -10 }}
+                      className="p-3.5 border border-red-500/25 bg-red-950/20 rounded-xl flex items-start gap-2.5"
+                    >
+                      <ShieldAlert className="h-4.5 w-4.5 text-red-400 shrink-0 mt-0.5" />
+                      <span className="text-xs text-red-300 leading-tight font-mono">{error}</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
                 {/* Name */}
                 <div className="space-y-1.5">
                   <label htmlFor="name" className="text-xs font-mono font-bold text-slate-400 block uppercase">
