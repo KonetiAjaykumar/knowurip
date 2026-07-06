@@ -83,6 +83,7 @@ export default function HomePage() {
       }
       const ipJson: IPData = await res.json();
       setData(ipJson);
+      setSearchQuery(ipJson.ip); // Keep input in sync with loaded data
       if (ipQuery) {
         setActiveIp(ipJson.ip);
       } else {
@@ -242,56 +243,7 @@ export default function HomePage() {
           </motion.p>
         </section>
 
-        {/* SEARCH BAR */}
-        <div className="max-w-md mx-auto relative z-20 space-y-2.5">
-          <form onSubmit={handleSearch} className="flex items-center gap-2">
-            <div className="relative flex-grow">
-              <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <Globe className="h-4 w-4 text-slate-500" />
-              </span>
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search IP / Domain (e.g. 8.8.8.8 or google.com)"
-                className="w-full bg-slate-900/60 border border-white/10 focus:border-cyan-500/50 rounded-xl pl-10 pr-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none transition-colors"
-              />
-            </div>
-            <button
-              type="submit"
-              className="px-4 py-2.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-xs cursor-pointer transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] shrink-0"
-            >
-              Lookup
-            </button>
-            {activeIp && (
-              <button
-                type="button"
-                onClick={handleReset}
-                className="px-3 py-2.5 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 text-xs font-semibold text-white transition-all cursor-pointer hover:bg-white/10 shrink-0"
-              >
-                Reset
-              </button>
-            )}
-          </form>
 
-          {/* Preset IP/Domain Shortcuts */}
-          <div className="flex flex-wrap items-center justify-center gap-2 text-xs font-mono">
-            <span className="text-slate-500">Presets:</span>
-            {["8.8.8.8", "1.1.1.1", "google.com", "github.com"].map((preset) => (
-              <button
-                key={preset}
-                type="button"
-                onClick={() => {
-                  setSearchQuery(preset);
-                  fetchIPData(preset);
-                }}
-                className="px-2 py-0.5 rounded border border-white/5 bg-slate-900/50 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/20 transition-all cursor-pointer"
-              >
-                {preset}
-              </button>
-            ))}
-          </div>
-        </div>
 
         {loading ? (
           /* Dark Cyber Loading Skeleton */
@@ -338,14 +290,28 @@ export default function HomePage() {
                 Your Public IP Address
               </span>
               
-              <div className="my-4 flex items-center justify-center gap-3">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-mono text-white select-all tracking-tight break-all">
-                  {data.ip}
-                </h2>
-                <div className="px-2.5 py-0.5 rounded-full border border-cyan-400/20 bg-cyan-400/10 text-cyan-400 text-[10px] font-bold font-mono uppercase shrink-0">
-                  {data.ip.includes(":") ? "IPv6" : "IPv4"}
+              <form onSubmit={handleSearch} className="my-4 space-y-4">
+                <div className="flex items-center justify-center gap-3 max-w-md mx-auto border-b border-white/5 focus-within:border-cyan-500/50 transition-colors pb-1.5">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Enter IP or Domain..."
+                    className="w-full text-center text-xl sm:text-2xl md:text-3xl font-extrabold font-mono text-white bg-transparent border-none outline-none focus:ring-0 placeholder-slate-700 tracking-tight break-all"
+                  />
+                  {searchQuery !== data.ip && (
+                    <button
+                      type="submit"
+                      className="px-3 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-[10px] cursor-pointer transition-all shadow-[0_0_10px_rgba(6,182,212,0.25)] shrink-0 font-mono uppercase"
+                    >
+                      Go
+                    </button>
+                  )}
+                  <div className="px-2 py-0.5 rounded-full border border-cyan-400/20 bg-cyan-400/10 text-cyan-400 text-[10px] font-bold font-mono uppercase shrink-0">
+                    {data.ip.includes(":") ? "IPv6" : "IPv4"}
+                  </div>
                 </div>
-              </div>
+              </form>
 
               <div className="flex flex-wrap items-center justify-center gap-3 pt-1">
                 <button
@@ -371,6 +337,32 @@ export default function HomePage() {
                   <RefreshCw className="h-3.5 w-3.5 text-slate-400" />
                   <span>Refresh Node</span>
                 </button>
+                {activeIp && (
+                  <button
+                    onClick={handleReset}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-cyan-500/10 border border-cyan-500/20 hover:border-cyan-400/40 text-xs font-semibold text-white transition-all duration-300 cursor-pointer hover:bg-cyan-500/20"
+                  >
+                    <span>Reset to My IP</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Preset IP/Domain Shortcuts */}
+              <div className="flex flex-wrap items-center justify-center gap-2 text-[10px] font-mono mt-5 pt-4 border-t border-white/5">
+                <span className="text-slate-500">Presets:</span>
+                {["8.8.8.8", "1.1.1.1", "google.com", "github.com"].map((preset) => (
+                  <button
+                    key={preset}
+                    type="button"
+                    onClick={() => {
+                      setSearchQuery(preset);
+                      fetchIPData(preset);
+                    }}
+                    className="px-2 py-0.5 rounded border border-white/5 bg-slate-950/40 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/20 transition-all cursor-pointer"
+                  >
+                    {preset}
+                  </button>
+                ))}
               </div>
             </motion.div>
 
