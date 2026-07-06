@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import dns from "dns";
 
 // Structure matches frontend expectation
 interface IPDataResponse {
@@ -127,6 +128,30 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     let target = searchParams.get("ip") || "";
     let isLocal = false;
+
+    // Resolve domain names (e.g. google.com) to IPv4
+    if (target) {
+      const isIp = /^[0-9a-f.:]+$/i.test(target);
+      if (!isIp) {
+        try {
+          const addresses = await dns.promises.resolve4(target);
+          if (addresses && addresses.length > 0) {
+            target = addresses[0];
+          } else {
+            return NextResponse.json(
+              { error: `Could not resolve IPv4 address for domain: ${target}` },
+              { status: 400 }
+            );
+          }
+        } catch (dnsErr: any) {
+          console.error(`DNS lookup failed for ${target}:`, dnsErr);
+          return NextResponse.json(
+            { error: `DNS resolution failed for domain '${target}'. Please verify it is a valid domain.` },
+            { status: 400 }
+          );
+        }
+      }
+    }
 
     // Auto-detect visitor IP if not searching
     if (!target) {
