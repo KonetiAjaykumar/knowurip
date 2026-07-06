@@ -1,0 +1,48 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id            String          @id @default(uuid())
+  fullName      String
+  email         String          @unique
+  passwordHash  String
+  isVerified    Boolean         @default(false)
+  avatar        String          @default("cyber-avatar-1")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  passwordResets PasswordReset[]
+  sessions      Session[]
+}
+
+model VerificationOTP {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  otp       String
+  attempts  Int      @default(0)
+  resends   Int      @default(0)
+  expiresAt DateTime
+  updatedAt DateTime @updatedAt
+}
+
+model PasswordReset {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expires      DateTime
+}
