@@ -366,270 +366,184 @@ export default function HomePage() {
               </div>
             </motion.div>
 
-            {/* GRID OF DETAILS */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* BORDERLESS DIAGNOSTIC CATEGORIES */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 pt-6">
               
-              {/* LEFT CARD - Security Audit Indicators */}
+              {/* Category 1: Geolocation & Live Map */}
               <motion.div
-                initial={{ x: -20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="border border-white/10 rounded-2xl bg-slate-900/75 p-6 backdrop-blur-xl hover:border-cyan-500/20 transition-all duration-500 flex flex-col justify-between shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
+                className="space-y-6"
               >
-                <div>
-                  <div className="flex items-center justify-between pb-4 border-b border-white/5 mb-5">
-                    <div className="flex items-center gap-2.5">
-                      <Shield className="h-5 w-5 text-cyan-400" />
-                      <h3 className="font-bold text-white text-base">Security & Privacy Audit</h3>
+                <div className="border-b border-cyan-500/20 pb-2">
+                  <h3 className="text-xs font-mono font-bold text-cyan-400 tracking-widest uppercase">01 // Geolocation & Mapping</h3>
+                </div>
+                <div className="space-y-5 font-mono text-sm">
+                  <div className="flex items-start gap-4">
+                    <MapPin className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] text-slate-500 block">GEOGRAPHY</span>
+                      <div className="flex items-center gap-1.5 pt-0.5">
+                        <img 
+                          src={data.countryFlagUrl} 
+                          alt={data.country} 
+                          className="w-4.5 h-3 object-cover rounded-sm border border-white/5" 
+                          onError={(e) => {
+                            (e.target as HTMLElement).style.display = "none";
+                          }}
+                        />
+                        <span className="text-white font-semibold">{data.city}, {data.region}, {data.country}</span>
+                      </div>
+                      <span className="text-[10px] text-slate-500 block pt-0.5">Postal: {data.postal}</span>
                     </div>
-                    <span className="text-xs font-semibold text-emerald-400 font-mono flex items-center gap-1">
-                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                      ENCRYPTED
-                    </span>
+                  </div>
+                  
+                  <div className="flex items-start gap-4">
+                    <Globe className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] text-slate-500 block">COORDINATES</span>
+                      <span className="text-white font-semibold pt-0.5 block">{data.latitude.toFixed(4)}, {data.longitude.toFixed(4)}</span>
+                    </div>
                   </div>
 
-                  <div className="space-y-4 font-mono text-xs">
+                  {/* Embedded Google Map */}
+                  <a
+                    href={`https://www.google.com/maps/search/?api=1&query=${data.latitude},${data.longitude}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative block w-full h-44 rounded-xl overflow-hidden border border-white/10 bg-slate-950/50 cursor-pointer group/map mt-2 shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+                  >
+                    <iframe
+                      width="100%"
+                      height="100%"
+                      style={{ border: 0, filter: "invert(90%) hue-rotate(180deg) grayscale(10%)", pointerEvents: "none" }}
+                      loading="lazy"
+                      src={`https://maps.google.com/maps?q=${data.latitude},${data.longitude}&t=&z=11&ie=UTF8&iwloc=&output=embed`}
+                    ></iframe>
+                    <div className="absolute inset-0 bg-cyan-500/0 hover:bg-cyan-500/5 transition-colors duration-300 flex items-center justify-center">
+                      <span className="opacity-0 group-hover/map:opacity-100 transition-opacity duration-300 bg-slate-950/90 border border-cyan-500/30 text-[10px] text-cyan-400 font-mono px-2 py-1 rounded">
+                        Open Google Maps
+                      </span>
+                    </div>
+                  </a>
+                </div>
+              </motion.div>
+
+              {/* Category 2: Network Identity */}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="space-y-6"
+              >
+                <div className="border-b border-cyan-500/20 pb-2">
+                  <h3 className="text-xs font-mono font-bold text-cyan-400 tracking-widest uppercase">02 // Network Routing</h3>
+                </div>
+                <div className="space-y-5 font-mono text-sm">
+                  <div className="flex items-start gap-4">
+                    <Server className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] text-slate-500 block">ISP PROVIDER</span>
+                      <span className="text-white font-semibold pt-0.5 block">{data.isp}</span>
+                      <span className="text-[10px] text-slate-400 block pt-0.5">{data.organization}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <Cpu className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] text-slate-500 block">ASN ROUTING</span>
+                      <span className="text-white font-semibold pt-0.5 block">{data.asn}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <Info className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] text-slate-500 block">REVERSE DNS</span>
+                      <span className="text-white font-semibold pt-0.5 block text-xs break-all leading-relaxed">{data.hostname}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-4">
+                    <Clock className="h-5 w-5 text-cyan-400 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="text-[10px] text-slate-500 block">TIMEZONE</span>
+                      <span className="text-white font-semibold pt-0.5 block">{data.timezone}</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Category 3: Security & Client Audit */}
+              <motion.div
+                initial={{ y: 20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="space-y-6"
+              >
+                <div className="border-b border-cyan-500/20 pb-2">
+                  <h3 className="text-xs font-mono font-bold text-cyan-400 tracking-widest uppercase">03 // Security & Client Audit</h3>
+                </div>
+                <div className="space-y-5 font-mono text-xs">
+                  {/* Security indicators */}
+                  <div className="space-y-3.5 border-b border-white/5 pb-5">
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 font-medium">VPN Tunnel:</span>
-                      <span className={`font-bold px-2 py-0.5 rounded text-[10px] ${data.security.vpn ? "bg-red-500/10 text-red-400 border border-red-500/25" : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25"}`}>
-                        {data.security.vpn ? "VPN DETECTED" : "NO VPN DETECTED"}
+                      <span className="text-slate-500">VPN Tunnel:</span>
+                      <span className={`font-bold px-2 py-0.5 rounded text-[10px] ${data.security.vpn ? "bg-red-500/10 text-red-400" : "bg-emerald-500/10 text-emerald-400"}`}>
+                        {data.security.vpn ? "DETECTED" : "CLEAN"}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 font-medium">Proxy Connection:</span>
-                      <span className={`font-bold px-2 py-0.5 rounded text-[10px] ${data.security.proxy ? "bg-red-500/10 text-red-400 border border-red-500/25" : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25"}`}>
-                        {data.security.proxy ? "PROXY DETECTED" : "NO PROXY DETECTED"}
+                      <span className="text-slate-500">Proxy Shield:</span>
+                      <span className={`font-bold px-2 py-0.5 rounded text-[10px] ${data.security.proxy ? "bg-red-500/10 text-red-400" : "bg-emerald-500/10 text-emerald-400"}`}>
+                        {data.security.proxy ? "DETECTED" : "CLEAN"}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 font-medium">Tor Exit Node:</span>
-                      <span className={`font-bold px-2 py-0.5 rounded text-[10px] ${data.security.tor ? "bg-red-500/10 text-red-400 border border-red-500/25" : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25"}`}>
-                        {data.security.tor ? "TOR EXIT DETECTED" : "NO TOR EXIT DETECTED"}
+                      <span className="text-slate-500">Tor Exit Node:</span>
+                      <span className={`font-bold px-2 py-0.5 rounded text-[10px] ${data.security.tor ? "bg-red-500/10 text-red-400" : "bg-emerald-500/10 text-emerald-400"}`}>
+                        {data.security.tor ? "DETECTED" : "CLEAN"}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 font-medium">Hosting / Datacenter:</span>
-                      <span className={`font-bold px-2 py-0.5 rounded text-[10px] ${data.security.hosting ? "bg-amber-500/10 text-amber-400 border border-amber-500/25" : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/25"}`}>
-                        {data.security.hosting ? "DATACENTER / CLOUD" : "RESIDENTIAL / ISP"}
+                      <span className="text-slate-500">Cloud Hosting:</span>
+                      <span className={`font-bold px-2 py-0.5 rounded text-[10px] ${data.security.hosting ? "bg-amber-500/10 text-amber-400" : "bg-emerald-500/10 text-emerald-400"}`}>
+                        {data.security.hosting ? "DATACENTER" : "RESIDENTIAL"}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between pt-1">
+                      <span className="text-slate-500">Risk Assessment:</span>
+                      <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded ${
+                        data.security.riskLevel === "High" ? "bg-red-500/10 text-red-400 border border-red-500/20" :
+                        data.security.riskLevel === "Medium" ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
+                        "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                      }`}>
+                        {data.security.riskLevel.toUpperCase()} RISK
                       </span>
                     </div>
                   </div>
-                </div>
 
-                <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <ShieldCheck className="h-4.5 w-4.5 text-cyan-400" />
-                    <span className="text-xs text-slate-400">Threat Risk Assessment:</span>
-                  </div>
-                  <span className={`text-xs font-bold font-mono tracking-wider px-3 py-1 rounded-lg ${
-                    data.security.riskLevel === "High" 
-                      ? "bg-red-500/10 text-red-400 border border-red-500/20" 
-                      : data.security.riskLevel === "Medium"
-                        ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
-                        : "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                  }`}>
-                    {data.security.riskLevel.toUpperCase()} RISK
-                  </span>
-                </div>
-              </motion.div>
-
-              {/* RIGHT CARD - Browser, Device & OS Analytics */}
-              <motion.div
-                initial={{ x: 20, opacity: 0 }}
-                animate={{ x: 0, opacity: 1 }}
-                transition={{ duration: 0.5, delay: 0.1 }}
-                className="border border-white/10 rounded-2xl bg-slate-900/75 p-6 backdrop-blur-xl hover:border-cyan-500/20 transition-all duration-500 flex flex-col justify-between shadow-[0_8px_32px_0_rgba(0,0,0,0.4)]"
-              >
-                <div>
-                  <div className="flex items-center justify-between pb-4 border-b border-white/5 mb-5">
-                    <div className="flex items-center gap-2.5">
-                      <Monitor className="h-5 w-5 text-cyan-400" />
-                      <h3 className="font-bold text-white text-base">Device & Browser Analytics</h3>
-                    </div>
-                    <span className="text-[10px] text-slate-500 font-mono tracking-widest uppercase">Client Data</span>
-                  </div>
-
-                  <div className="space-y-4 font-mono text-xs">
+                  {/* Client device stats */}
+                  <div className="space-y-3.5 pt-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 font-medium">Operating System:</span>
-                      <span className="text-white font-semibold">{clientInfo?.os || "Loading..."}</span>
+                      <span className="text-slate-500">Operating System:</span>
+                      <span className="text-white font-semibold">{clientInfo?.os}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 font-medium">Web Browser:</span>
-                      <span className="text-white font-semibold">{clientInfo?.browser || "Loading..."}</span>
+                      <span className="text-slate-500">Web Browser:</span>
+                      <span className="text-white font-semibold">{clientInfo?.browser}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 font-medium">Display Resolution:</span>
-                      <span className="text-white font-semibold">{clientInfo?.resolution || "Loading..."}</span>
+                      <span className="text-slate-500">Display Grid:</span>
+                      <span className="text-white font-semibold">{clientInfo?.resolution}</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-400 font-medium">System Language:</span>
-                      <span className="text-white font-semibold">{clientInfo?.language || "Loading..."}</span>
+                      <span className="text-slate-500">Client Clock:</span>
+                      <span className="text-white font-semibold font-bold">{clientInfo?.localTime} @ {liveClock}</span>
                     </div>
                   </div>
-                </div>
-
-                <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4.5 w-4.5 text-cyan-400" />
-                    <span className="text-xs text-slate-400">Client Local Time:</span>
-                  </div>
-                  <span className="text-xs text-white font-mono font-bold">
-                    {clientInfo?.localTime ? `${clientInfo.localTime} @ ${liveClock}` : "Loading..."}
-                  </span>
-                </div>
-              </motion.div>
-
-            </div>
-
-            {/* GRID OF 6 DETAILS CARDS */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              
-              {/* Card 1: Geolocation */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.1 }}
-                className="border border-white/10 rounded-2xl bg-slate-900/70 p-5 backdrop-blur-xl hover:border-cyan-500/20 hover:-translate-y-1 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex items-start gap-4"
-              >
-                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
-                  <MapPin className="h-5 w-5 text-cyan-400" />
-                </div>
-                <div className="space-y-1 flex-grow">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">Location Data</span>
-                  <h4 className="font-bold text-white text-sm">Geographical</h4>
-                  <div className="flex items-center gap-2 pt-1">
-                    <img 
-                      src={data.countryFlagUrl} 
-                      alt={data.country} 
-                      className="w-5 h-3.5 object-cover rounded-sm border border-white/5 shrink-0"
-                      onError={(e) => {
-                        (e.target as HTMLElement).style.display = "none";
-                      }}
-                    />
-                    <p className="text-xs text-slate-300 font-mono truncate max-w-[150px]">
-                      {data.city}, {data.region}, {data.country}
-                    </p>
-                  </div>
-                  <span className="text-[10px] text-slate-500 font-mono block">Postal: {data.postal}</span>
-                </div>
-              </motion.div>
-
-              {/* Card 2: Coordinates */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.15 }}
-                className="border border-white/10 rounded-2xl bg-slate-900/70 p-5 backdrop-blur-xl hover:border-cyan-500/20 hover:-translate-y-1 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex flex-col gap-4"
-              >
-                <div className="flex items-start gap-4">
-                  <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
-                    <Globe className="h-5 w-5 text-cyan-400" />
-                  </div>
-                  <div className="space-y-1 flex-grow">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">Positioning</span>
-                    <h4 className="font-bold text-white text-sm">Coords (Lat, Long)</h4>
-                    <p className="text-xs text-slate-300 font-mono pt-1">
-                      {data.latitude.toFixed(4)}, {data.longitude.toFixed(4)}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Small Clickable Google Maps Preview */}
-                <a
-                  href={`https://www.google.com/maps/search/?api=1&query=${data.latitude},${data.longitude}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="relative block w-full h-32 rounded-xl overflow-hidden border border-white/5 bg-slate-950 cursor-pointer group/map"
-                >
-                  <iframe
-                    width="100%"
-                    height="100%"
-                    style={{ border: 0, filter: "invert(90%) hue-rotate(180deg) grayscale(10%)", pointerEvents: "none" }}
-                    loading="lazy"
-                    src={`https://maps.google.com/maps?q=${data.latitude},${data.longitude}&t=&z=12&ie=UTF8&iwloc=&output=embed`}
-                  ></iframe>
-                  <div className="absolute inset-0 bg-cyan-500/0 hover:bg-cyan-500/10 transition-colors duration-300 flex items-center justify-center">
-                    <span className="opacity-0 group-hover/map:opacity-100 transition-opacity duration-300 bg-slate-950/80 border border-cyan-500/30 text-[10px] text-cyan-400 font-mono px-2.5 py-1 rounded">
-                      Open in Google Maps
-                    </span>
-                  </div>
-                </a>
-              </motion.div>
-
-              {/* Card 3: ISP / Network */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.2 }}
-                className="border border-white/10 rounded-2xl bg-slate-900/70 p-5 backdrop-blur-xl hover:border-cyan-500/20 hover:-translate-y-1 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex items-start gap-4"
-              >
-                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
-                  <Server className="h-5 w-5 text-cyan-400" />
-                </div>
-                <div className="space-y-1 flex-grow">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">Internet Provider</span>
-                  <h4 className="font-bold text-white text-sm truncate max-w-[180px]">{data.isp}</h4>
-                  <p className="text-xs text-slate-300 font-mono truncate max-w-[180px] pt-1">
-                    {data.organization}
-                  </p>
-                </div>
-              </motion.div>
-
-              {/* Card 4: ASN Block */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.25 }}
-                className="border border-white/10 rounded-2xl bg-slate-900/70 p-5 backdrop-blur-xl hover:border-cyan-500/20 hover:-translate-y-1 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex items-start gap-4"
-              >
-                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
-                  <Cpu className="h-5 w-5 text-cyan-400" />
-                </div>
-                <div className="space-y-1 flex-grow">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">Network Block</span>
-                  <h4 className="font-bold text-white text-sm">{data.asn}</h4>
-                  <p className="text-xs text-slate-300 font-mono truncate max-w-[180px] pt-1">
-                    Autonomous System Routing
-                  </p>
-                </div>
-              </motion.div>
-
-              {/* Card 5: Timezone */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.35 }}
-                className="border border-white/10 rounded-2xl bg-slate-900/70 p-5 backdrop-blur-xl hover:border-cyan-500/20 hover:-translate-y-1 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex items-start gap-4"
-              >
-                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
-                  <Clock className="h-5 w-5 text-cyan-400" />
-                </div>
-                <div className="space-y-1 flex-grow">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">Timezone Grid</span>
-                  <h4 className="font-bold text-white text-sm truncate max-w-[180px]">{data.timezone}</h4>
-                  <p className="text-xs text-slate-300 font-mono pt-1">
-                    Local Timezone Registry
-                  </p>
-                </div>
-              </motion.div>
-
-              {/* Card 6: Reverse DNS Hostname */}
-              <motion.div
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.4, delay: 0.3 }}
-                className="border border-white/10 rounded-2xl bg-slate-900/70 p-5 backdrop-blur-xl hover:border-cyan-500/20 hover:-translate-y-1 transition-all duration-300 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] flex items-start gap-4"
-              >
-                <div className="h-10 w-10 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center shrink-0">
-                  <Info className="h-5 w-5 text-cyan-400" />
-                </div>
-                <div className="space-y-1 flex-grow">
-                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500 font-mono">Reverse DNS</span>
-                  <h4 className="font-bold text-white text-xs truncate max-w-[180px]">{data.hostname}</h4>
-                  <p className="text-xs text-slate-300 font-mono pt-1">
-                    Hostname Mapping
-                  </p>
                 </div>
               </motion.div>
 
