@@ -44,18 +44,18 @@ export default function WorldMap({
   ];
 
   return (
-    <div className="absolute inset-0 z-0 h-full w-full overflow-hidden bg-slate-950/90 select-none">
+    <div className="absolute inset-0 z-0 h-full w-full overflow-hidden bg-white dark:bg-slate-950/90 select-none transition-colors duration-300">
       {/* Grid Overlay for Cyberpunk/Network look */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(100,116,139,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(100,116,139,0.04)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
 
       {/* Radial fade to hide outer edges of the map */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#020617_95%)]"></div>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#ffffff_95%)] dark:bg-[radial-gradient(ellipse_at_center,transparent_20%,#020617_95%)]"></div>
 
       {/* SVG Canvas */}
       <svg
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
-        className="absolute inset-0 h-full w-full opacity-35"
+        className="absolute inset-0 h-full w-full opacity-60 dark:opacity-35"
       >
         {/* Draw continent paths */}
         {continents.map((d, i) => (
@@ -63,7 +63,8 @@ export default function WorldMap({
             key={i}
             d={d}
             fill="none"
-            stroke="rgba(0, 210, 255, 0.25)"
+            stroke="currentColor"
+            className="text-cyan-500/35 dark:text-cyan-400/25"
             strokeWidth="0.4"
             strokeDasharray="1,1"
             initial={{ pathLength: 0, opacity: 0 }}
@@ -79,8 +80,9 @@ export default function WorldMap({
             y1="0"
             x2={x}
             y2={y}
-            stroke="rgba(0, 210, 255, 0.15)"
-            strokeWidth="0.15"
+            stroke="currentColor"
+            className="text-cyan-500/40 dark:text-cyan-400/20"
+            strokeWidth="0.25"
             strokeDasharray="2,2"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -99,10 +101,11 @@ export default function WorldMap({
             transform: "translate(-50%, -50%)",
           }}
         >
-          {/* Glowing dot */}
-          <div className="relative flex h-6 w-6 items-center justify-center">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-400 opacity-75"></span>
-            <span className="relative inline-flex h-3 w-3 rounded-full bg-cyan-500 shadow-[0_0_10px_#00d2ff]"></span>
+          {/* Glowing dot with blinking location background */}
+          <div className="relative flex h-8 w-8 items-center justify-center">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-cyan-500/40 opacity-75"></span>
+            <span className="absolute inline-flex h-12 w-12 animate-pulse rounded-full bg-cyan-400/20"></span>
+            <span className="relative inline-flex h-4 w-4 rounded-full bg-cyan-600 dark:bg-cyan-500 shadow-[0_0_12px_rgba(6,182,212,0.6)] border border-white dark:border-slate-950"></span>
           </div>
 
           {/* Location tooltip text */}
@@ -110,7 +113,7 @@ export default function WorldMap({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.8 }}
-            className="absolute left-7 top-0 -translate-y-1/2 whitespace-nowrap rounded-md border border-cyan-500/20 bg-slate-900/90 px-2.5 py-1 text-[10px] font-mono font-bold text-cyan-400 backdrop-blur-sm shadow-lg"
+            className="absolute left-9 top-0 -translate-y-1/2 whitespace-nowrap rounded-md border border-cyan-500/20 bg-white/95 dark:bg-slate-900/90 px-2.5 py-1 text-[10px] font-mono font-bold text-cyan-600 dark:text-cyan-400 backdrop-blur-sm shadow-md transition-colors duration-300"
           >
             PING LOCATED // {userCity.toUpperCase()}, {userCountry.toUpperCase()}
           </motion.div>

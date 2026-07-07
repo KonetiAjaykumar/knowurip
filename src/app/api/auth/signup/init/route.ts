@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
     // Generate 6-digit OTP code
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes validity
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes validity
 
     // Check resend limits on existing OTP record
     const existingOTP = await prisma.verificationOTP.findUnique({

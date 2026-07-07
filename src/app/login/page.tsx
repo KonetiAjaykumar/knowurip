@@ -4,12 +4,13 @@ import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShieldCheck, ShieldAlert, Mail, Lock, LogIn } from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, ShieldCheck, ShieldAlert, Globe, LogIn } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,31 +36,22 @@ function LoginForm() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Authentication failed.");
+        throw new Error(data.error || "Invalid email or password. Please try again.");
       }
 
-      // Check if email verification is required
       if (data.status === "VERIFY_REQUIRED") {
         sessionStorage.setItem("signup_email", email.trim());
-        setSuccess("Email verification required. Redirecting to OTP verify page...");
-        setTimeout(() => {
-          router.push("/verify-email");
-        }, 1500);
+        setSuccess("Email verification required. Redirecting...");
+        setTimeout(() => router.push("/verify-email"), 1200);
         return;
       }
 
-      setSuccess("Session authorized successfully. Accessing terminal...");
-      
-      // Save details to global context
+      setSuccess("Login successful! Redirecting to dashboard...");
       login(data.user);
-
-      // Redirect target
-      const fromPath = searchParams.get("from") || "/";
-      setTimeout(() => {
-        router.push(fromPath);
-      }, 1200);
+      const from = searchParams.get("from") || "/";
+      setTimeout(() => router.push(from), 1000);
     } catch (err: any) {
-      setError(err.message || "Invalid credentials.");
+      setError(err.message || "Login failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -69,122 +61,131 @@ function LoginForm() {
     <motion.div
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="border border-white/10 rounded-2xl bg-slate-900/60 p-6 sm:p-8 backdrop-blur-md shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
+      transition={{ duration: 0.4 }}
+      className="bg-slate-900/80 border border-white/10 rounded-2xl p-8 shadow-2xl backdrop-blur-xl"
     >
-      <AnimatePresence mode="wait">
+      {/* Alerts */}
+      <AnimatePresence>
         {error && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="mb-4 p-3.5 border border-red-500/25 bg-red-950/20 rounded-xl flex items-start gap-2.5"
+            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+            animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
+            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+            className="flex items-start gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl"
           >
-            <ShieldAlert className="h-4.5 w-4.5 text-red-400 shrink-0 mt-0.5" />
-            <span className="text-xs text-red-300 leading-tight font-mono">{error}</span>
+            <ShieldAlert className="h-4 w-4 text-red-400 shrink-0 mt-0.5" />
+            <p className="text-sm text-red-300 leading-tight">{error}</p>
           </motion.div>
         )}
-
         {success && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="mb-4 p-3.5 border border-emerald-500/25 bg-emerald-950/20 rounded-xl flex items-start gap-2.5"
+            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
+            animate={{ opacity: 1, height: "auto", marginBottom: 16 }}
+            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+            className="flex items-start gap-3 p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-xl"
           >
-            <ShieldCheck className="h-4.5 w-4.5 text-emerald-400 shrink-0 mt-0.5" />
-            <span className="text-xs text-emerald-300 leading-tight font-mono">{success}</span>
+            <ShieldCheck className="h-4 w-4 text-emerald-400 shrink-0 mt-0.5" />
+            <p className="text-sm text-emerald-300 leading-tight">{success}</p>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <form onSubmit={handleLogin} className="space-y-4">
+      <form onSubmit={handleLogin} className="space-y-5">
+        {/* Email */}
         <div className="space-y-1.5">
-          <label htmlFor="email" className="text-[10px] font-mono font-bold text-slate-400 block uppercase tracking-wider">
+          <label htmlFor="email" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
             Email Address
           </label>
           <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-              <Mail className="h-4 w-4 text-slate-500" />
-            </span>
+            <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
             <input
               id="email"
               type="email"
               required
+              autoComplete="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="john@example.com"
-              className="w-full bg-slate-950/50 border border-white/15 focus:border-cyan-500/50 rounded-xl pl-10 pr-3 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none transition-colors"
+              className="w-full bg-slate-950/60 border border-white/10 focus:border-cyan-500/60 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500/30 transition-all"
             />
           </div>
         </div>
 
+        {/* Password */}
         <div className="space-y-1.5">
-          <div className="flex justify-between items-center">
-            <label htmlFor="pass" className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">
+          <div className="flex items-center justify-between">
+            <label htmlFor="password" className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
               Password
             </label>
             <Link
               href="/forgot-password"
-              className="text-[10px] text-cyan-400 font-semibold hover:underline font-mono uppercase tracking-wider"
+              className="text-xs text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
             >
-              Forgot Password?
+              Forgot password?
             </Link>
           </div>
           <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
-              <Lock className="h-4 w-4 text-slate-500" />
-            </span>
+            <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500 pointer-events-none" />
             <input
-              id="pass"
-              type="password"
+              id="password"
+              type={showPassword ? "text" : "password"}
               required
+              autoComplete="current-password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••••••"
-              className="w-full bg-slate-950/50 border border-white/15 focus:border-cyan-500/50 rounded-xl pl-10 pr-3 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none transition-colors"
+              placeholder="Enter your password"
+              className="w-full bg-slate-950/60 border border-white/10 focus:border-cyan-500/60 rounded-xl pl-10 pr-12 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:ring-1 focus:ring-cyan-500/30 transition-all"
             />
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+            >
+              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
           </div>
         </div>
 
-        {/* Remember Me checkbox */}
-        <div className="flex items-center">
+        {/* Remember Me */}
+        <div className="flex items-center gap-2.5">
           <input
             id="rememberMe"
             type="checkbox"
             checked={rememberMe}
             onChange={(e) => setRememberMe(e.target.checked)}
-            className="h-4 w-4 rounded border-white/10 bg-slate-950 text-cyan-500 focus:ring-0 focus:ring-offset-0 cursor-pointer"
+            className="h-4 w-4 rounded border-white/20 bg-slate-950 accent-cyan-500 cursor-pointer"
           />
-          <label htmlFor="rememberMe" className="ml-2 text-xs text-slate-400 font-mono select-none cursor-pointer">
-            Remember this terminal session
+          <label htmlFor="rememberMe" className="text-sm text-slate-400 cursor-pointer select-none">
+            Keep me signed in for 30 days
           </label>
         </div>
 
+        {/* Submit */}
         <button
           type="submit"
-          disabled={loading}
-          className="w-full mt-2 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 disabled:bg-cyan-800 text-white font-bold text-sm cursor-pointer transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] disabled:opacity-50"
+          disabled={loading || !email || !password}
+          className="w-full py-3.5 rounded-xl font-bold text-sm text-white bg-cyan-600 hover:bg-cyan-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed transition-all duration-200 shadow-[0_0_20px_rgba(6,182,212,0.25)] hover:shadow-[0_0_25px_rgba(6,182,212,0.4)] flex items-center justify-center gap-2 mt-2"
         >
           {loading ? (
             <>
-              <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              <span>Verifying Signature...</span>
+              <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              <span>Signing in...</span>
             </>
           ) : (
             <>
               <LogIn className="h-4 w-4" />
-              <span>Login Session</span>
+              <span>Sign In</span>
             </>
           )}
         </button>
       </form>
 
-      <div className="mt-5 text-center">
-        <p className="text-xs text-slate-500">
-          No security node?{" "}
-          <Link href="/signup" className="text-cyan-400 font-semibold hover:underline">
-            Register Here
+      {/* Footer */}
+      <div className="mt-6 pt-6 border-t border-white/5 text-center">
+        <p className="text-sm text-slate-400">
+          Don't have an account?{" "}
+          <Link href="/signup" className="text-cyan-400 font-semibold hover:text-cyan-300 transition-colors">
+            Create one for free
           </Link>
         </p>
       </div>
@@ -194,27 +195,27 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="relative min-h-[calc(100vh-8rem)] bg-slate-950/90 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center overflow-hidden">
-      {/* Background patterns */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.01)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.01)_1px,transparent_1px)] bg-[size:40px_40px]"></div>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,#020617_95%)]"></div>
+    <div className="min-h-[calc(100vh-4rem)] bg-slate-950 flex items-center justify-center px-4 py-12 relative overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(6,182,212,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(6,182,212,0.03)_1px,transparent_1px)] bg-[size:48px_48px]" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/5 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 w-full max-w-md space-y-6">
-        <div className="text-center space-y-2">
-          <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400 bg-cyan-500/5 border border-cyan-500/20 px-3 py-1 rounded-full">
-            Security Authentication
-          </span>
-          <h1 className="text-3xl font-extrabold text-white tracking-tight pt-1">
-            Access <span className="bg-gradient-to-r from-cyan-400 to-indigo-500 bg-clip-text text-transparent">Terminal</span>
-          </h1>
-          <p className="text-xs text-slate-400">
-            Provide user credentials to access network routing stats.
-          </p>
+      <div className="relative z-10 w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 mb-6 group">
+            <Globe className="h-7 w-7 text-cyan-400 group-hover:rotate-12 transition-transform duration-300" />
+            <span className="text-2xl font-black tracking-wider text-white font-mono">
+              KNOW<span className="text-cyan-400">UR</span>IP
+            </span>
+          </Link>
+          <h1 className="text-3xl font-extrabold text-white mb-2">Welcome back</h1>
+          <p className="text-slate-400 text-sm">Sign in to access your IP analytics dashboard</p>
         </div>
 
         <Suspense fallback={
-          <div className="h-64 border border-white/10 rounded-2xl bg-slate-900/60 p-8 backdrop-blur-md flex items-center justify-center">
-            <div className="h-6 w-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+          <div className="bg-slate-900/80 border border-white/10 rounded-2xl p-8 flex items-center justify-center h-64">
+            <div className="h-6 w-6 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
           </div>
         }>
           <LoginForm />

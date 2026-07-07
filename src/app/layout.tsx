@@ -28,9 +28,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark h-full">
+    <html lang="en" className="h-full">
       <body
-        className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-slate-950 text-slate-100 flex flex-col min-h-screen antialiased`}
+        className={`${inter.variable} ${jetbrainsMono.variable} font-sans bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col min-h-screen antialiased transition-colors duration-300`}
       >
         <AuthProvider>
           <Navbar />
