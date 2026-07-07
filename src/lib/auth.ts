@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { cookies } from "next/headers";
 
 const JWT_SECRET = process.env.JWT_SECRET || "fallback_cyber_jwt_secret_token_123456";
