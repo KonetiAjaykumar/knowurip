@@ -243,7 +243,7 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => setPrefSecurity(!prefSecurity)}
-                  className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${prefSecurity ? "bg-cyan-500" : "bg-slate-950 border border-white/10"}`}
+                  className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${prefSecurity ? "bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.4)]" : "bg-slate-800 border border-white/10"}`}
                 >
                   <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${prefSecurity ? "translate-x-5" : "translate-x-0"}`}></span>
                 </button>
@@ -256,7 +256,7 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => setPrefNetwork(!prefNetwork)}
-                  className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${prefNetwork ? "bg-cyan-500" : "bg-slate-950 border border-white/10"}`}
+                  className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${prefNetwork ? "bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.4)]" : "bg-slate-800 border border-white/10"}`}
                 >
                   <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${prefNetwork ? "translate-x-5" : "translate-x-0"}`}></span>
                 </button>
@@ -269,7 +269,7 @@ export default function SettingsPage() {
                 </div>
                 <button
                   onClick={() => setPrefWeekly(!prefWeekly)}
-                  className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${prefWeekly ? "bg-cyan-500" : "bg-slate-950 border border-white/10"}`}
+                  className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${prefWeekly ? "bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.4)]" : "bg-slate-800 border border-white/10"}`}
                 >
                   <span className={`absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform ${prefWeekly ? "translate-x-5" : "translate-x-0"}`}></span>
                 </button>

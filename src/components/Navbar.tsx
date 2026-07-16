@@ -31,6 +31,7 @@ export default function Navbar() {
 
   const links = [
     { href: "/", label: "Dashboard" },
+    { href: "/hide-my-ip", label: "Hide My IP" },
     { href: "/about", label: "About IP" },
     { href: "/privacy", label: "Privacy Policy" },
     { href: "/contact", label: "Contact Us" }
