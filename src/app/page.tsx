@@ -418,7 +418,6 @@ export default function HomePage() {
                       style={{ border: 0, pointerEvents: "none" }}
                       loading="lazy"
                       src={`https://maps.google.com/maps?q=${data.latitude},${data.longitude}&t=&z=11&ie=UTF8&iwloc=&output=embed`}
-                      className="dark:invert dark:hue-rotate-180 dark:grayscale"
                     ></iframe>
                     <div className="absolute inset-0 bg-cyan-500/0 hover:bg-cyan-500/5 transition-colors duration-300 flex items-center justify-center">
                       <span className="opacity-0 group-hover/map:opacity-100 transition-opacity duration-300 bg-white/95 dark:bg-slate-950/90 border border-cyan-500/30 text-[10px] text-cyan-600 dark:text-cyan-400 font-mono px-2 py-1 rounded shadow-sm">

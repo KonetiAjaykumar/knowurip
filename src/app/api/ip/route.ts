@@ -94,17 +94,18 @@ function detectThreatHeuristics(org: string = "", hostname: string = "") {
     "vpn", "nordvpn", "expressvpn", "surfshark", "protonvpn", "mullvad", 
     "pia", "private internet access", "windscribe", "cyberghost", "tunnelbear",
     "hide.me", "vyprvpn", "hotspot shield", "ipvanish", "ivacy", "fastly vpn",
-    "torguard", "strongvpn", "tunnel", "purevpn", "hideguard", "zenmate"
+    "torguard", "strongvpn", "tunnel", "purevpn", "hideguard", "zenmate",
+    "m247", "datacamp", "clouvider", "packethub", "misaka", "quadranet", "sharkouter"
   ];
   
   const torKeywords = [
     "tor exit", "tor relay", "onion router", "tor-exit", "tor-relay", "exit node", "tor exit node"
   ];
- 
+  
   const isHosting = hostingKeywords.some(kw => text.includes(kw));
-  const isVpn = vpnKeywords.some(kw => text.includes(kw));
+  const isVpn = vpnKeywords.some(kw => text.includes(kw)) || isHosting;
   const isTor = torKeywords.some(kw => text.includes(kw));
-  const isProxy = isVpn; // Proxy matches VPN for basic heuristic
+  const isProxy = isVpn; // Proxy matches VPN/Hosting for basic heuristic
 
   let riskLevel: "Low" | "Medium" | "High" = "Low";
   if (isTor || isVpn) {
