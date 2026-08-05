@@ -41,14 +41,14 @@ export default function Navbar() {
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-slate-200/60 dark:border-white/5 bg-white/75 dark:bg-slate-950/75 backdrop-blur-md transition-colors duration-300">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex h-48 items-center justify-between">
+        <div className="flex h-[120px] items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
             <Link href="/" className="flex items-center gap-2 group">
               <img
                 src="/logo.png"
                 alt="KnowUrIP Logo"
-                className="h-44 w-auto object-contain dark:invert dark:hue-rotate-180 dark:mix-blend-screen transition-all duration-300"
+                className="w-[250px] h-[100px] object-contain dark:invert dark:hue-rotate-180 dark:mix-blend-screen transition-all duration-300"
               />
             </Link>
           </div>
