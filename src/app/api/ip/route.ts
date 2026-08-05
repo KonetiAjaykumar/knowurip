@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import dns from "dns";
 
+export const dynamic = "force-dynamic";
+
 // Structure matches frontend expectation
 interface IPDataResponse {
   ip: string;
@@ -78,7 +80,45 @@ function getClientIp(req: NextRequest): string {
 }
 
 // Heuristics threat detector based on ISP/Org/Hostname text
-function detectThreatHeuristics(org: string = "", hostname: string = "") {
+// Accurate VPN/Proxy detector using proxycheck.io with local fallback
+async function checkVpnProxy(ip: string, org: string = "", hostname: string = "") {
+  if (ip && ip !== "127.0.0.1" && ip !== "::1" && !isPrivateIp(ip)) {
+    try {
+      const response = await fetch(`http://proxycheck.io/v2/${encodeURIComponent(ip)}?vpn=1&asn=1`, {
+        cache: "no-store",
+        signal: AbortSignal.timeout(3000), // 3 second timeout
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.status === "ok" && data[ip]) {
+          const ipData = data[ip];
+          const isProxy = ipData.proxy === "yes";
+          const isVpn = ipData.type === "VPN" || ipData.type === "VPN/Proxy";
+          const isTor = ipData.type === "TOR" || ipData.type === "Tor Exit Node";
+          const isHosting = ipData.type === "Hosting" || ipData.type === "Business/Hosting";
+
+          let riskLevel: "Low" | "Medium" | "High" = "Low";
+          if (isTor || isVpn || isProxy) {
+            riskLevel = "High";
+          } else if (isHosting) {
+            riskLevel = "Medium";
+          }
+
+          return {
+            vpn: isVpn,
+            proxy: isProxy,
+            tor: isTor,
+            hosting: isHosting,
+            riskLevel
+          };
+        }
+      }
+    } catch (e) {
+      console.error("proxycheck.io API lookup failed, falling back to heuristics:", e);
+    }
+  }
+
+  // Improved Heuristic Fallback
   const text = `${org} ${hostname}`.toLowerCase();
   
   const hostingKeywords = [
@@ -103,14 +143,14 @@ function detectThreatHeuristics(org: string = "", hostname: string = "") {
   ];
   
   const isHosting = hostingKeywords.some(kw => text.includes(kw));
-  const isVpn = vpnKeywords.some(kw => text.includes(kw)) || isHosting;
   const isTor = torKeywords.some(kw => text.includes(kw));
-  const isProxy = isVpn; // Proxy matches VPN/Hosting for basic heuristic
+  const isVpn = vpnKeywords.some(kw => text.includes(kw));
+  const isProxy = isVpn;
 
   let riskLevel: "Low" | "Medium" | "High" = "Low";
-  if (isTor || isVpn) {
+  if (isTor || isVpn || isProxy) {
     riskLevel = "High";
-  } else if (isProxy || isHosting) {
+  } else if (isHosting) {
     riskLevel = "Medium";
   }
 
@@ -176,7 +216,7 @@ export async function GET(req: NextRequest) {
       : `https://ipinfo.io?token=${token}`;
 
     const response = await fetch(apiUrl, {
-      next: { revalidate: 900 } // Cache results for 15 minutes
+      cache: "no-store"
     });
 
     if (!response.ok) {
@@ -233,7 +273,7 @@ export async function GET(req: NextRequest) {
     }
 
     // Security indicator heuristics
-    const security = detectThreatHeuristics(data.org || "", hostname);
+    const security = await checkVpnProxy(ip, data.org || "", hostname);
 
     const countryFlagUrl = `https://flagcdn.com/w80/${countryCode.toLowerCase()}.png`;
 
